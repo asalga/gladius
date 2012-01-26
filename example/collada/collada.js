@@ -152,7 +152,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
 
         };
 
-        var expectedResources = 3;
+        var expectedResources = 4;
         var registerResource = function( name, instance ) {
             resources[name] = instance;
             if( Object.keys( resources ).length === expectedResources ) {
@@ -160,11 +160,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
             }
         };
 
-        engine.graphics.resource.Collada({
-        	url: "cube.dae",
-        	onsuccess: function ( results ) {
-        	}
-        });
+
         
         engine.graphics.resource.Mesh({
             script: engine.graphics.script.mesh.cube,
@@ -184,7 +180,13 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                 registerResource( 'light', instance );
             }
         });
-
+        
+        engine.graphics.resource.Collada({
+            url: "cube.dae",
+            onsuccess: function( instance ) {
+                registerResource( 'collada', instance );
+             }
+        });
     };
 
 

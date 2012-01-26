@@ -59,11 +59,22 @@ define( function ( require ) {
                             if( 4 != xhr.readyState ) {
                                 return;
                             }
-                            if ( xhr.status < 200 || xhr.status > 299 ) {
-                                _onfailure( xhr.statusText ) ;
+                            
+                            // xhr status 0 locally is success.
+                            if ( xhr.status >= 1 && xhr.status < 200 || xhr.status > 299 ) {
+                                _onfailure( xhr.statusText );
                                 return;
                             }
-                            var response = JSON.parse( xhr.responseText );
+                            
+                            var response;
+                            
+                            if(_url.match(/\.dae/)){
+                              // call cj's collada parser here?
+                            }
+                            else{
+                              response = JSON.parse( xhr.responseText );
+                            }
+                            
                             if (c) {
                                 _instance = new c( response );
                             } else {
