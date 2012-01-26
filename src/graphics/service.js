@@ -141,7 +141,8 @@ define( function ( require ) {
             var _scripts = {
 
                 mesh: {
-                    cube: MeshProceduralCube
+                    cube: MeshProceduralCube,
+                    plane: MeshProceduralPlane
                 },
                 material: {
                     sample: SampleColorMaterial
