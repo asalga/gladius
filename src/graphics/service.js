@@ -8,6 +8,7 @@ define( function ( require ) {
     
     var CubicVR = this.CubicVR,
 
+        Collada = require( './resource/collada' ),
         Mesh = require( './resource/mesh' ),
         Material = require( './resource/material' ),
         LightResource = require( './resource/light' ),
@@ -120,8 +121,8 @@ define( function ( require ) {
                 Material: Material( engine, _target.context ),
                 Mesh: Mesh( engine, _target.context ),
                 Shader: null,
-                Texture: null
-
+                Texture: null,
+                Collada: Collada( engine, _target.context)
             };
             
             Object.defineProperty( this, "resource", {
