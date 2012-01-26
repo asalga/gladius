@@ -152,7 +152,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
 
         };
 
-        var expectedResources = 3;
+        var expectedResources = 4;
         var registerResource = function( name, instance ) {
             resources[name] = instance;
             if( Object.keys( resources ).length === expectedResources ) {
@@ -166,8 +166,16 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                 registerResource( 'mesh', instance );
             }
         });
+        
+        engine.graphics.resource.Mesh({
+            script: engine.graphics.script.mesh.plane,
+            onsuccess: function( instance ) {
+                registerResource( 'plane', instance );
+            }
+        });
+        
         engine.graphics.resource.Material({
-            script: engine.graphics.script.material.sample,
+        	script: engine.graphics.script.material.sample,
             onsuccess: function( instance ) {
                 registerResource( 'material', instance );
             }

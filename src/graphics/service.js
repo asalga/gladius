@@ -18,6 +18,8 @@ define( function ( require ) {
         Light = require( './component/light' ),
 
         MeshProceduralCube = require( './script/mesh/procedural/cube' );
+        MeshProceduralPlane = require( './script/mesh/procedural/plane' );
+    
         SampleColorMaterial = require( './script/material/procedural/sample' );
         SampleLight = require( './script/light/procedural/sample' );
 
