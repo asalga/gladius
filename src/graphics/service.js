@@ -93,8 +93,10 @@ define( function ( require ) {
 
                         if( camera.active ) {
                             for( var mi = 0, ml = models.length; mi < ml; ++mi ) {
-                                
                                 model = models[ mi ].find( 'Model' );
+                                if( !model.visible ) {
+                                    continue;
+                                }
                                 transform = models[ mi ].find( 'Transform' );
                                 camera.prepareForRender();
                                                                 

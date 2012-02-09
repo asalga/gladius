@@ -45,6 +45,16 @@ define( function ( require ) {
           }
       });
       
+      var _visible = true;
+      Object.defineProperty( this, "visible", {
+          get: function() {
+              return _visible;
+          },
+          set: function( value ) {
+              _visible = value;
+          }
+      });
+      
       this.onComponentOwnerChanged = function( e ){
           if( e.data.previous === null && this.owner !== null ) {
               service.registerComponent( this.owner.id, this );
