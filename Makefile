@@ -13,6 +13,7 @@ SRC_DIR := ./src
 TEST_DIR := ./test
 DIST_DIR := ./dist
 EXTERNAL_DIR := ./external
+EXAMPLE_DIR := ./example
 GLADIUS_SRC := $(SRC_DIR)/$(GLADIUS).js
 GLADIUS_DIST := $(DIST_DIR)/$(GLADIUS).js
 GLADIUS_MIN := $(DIST_DIR)/$(GLADIUS).min.js
