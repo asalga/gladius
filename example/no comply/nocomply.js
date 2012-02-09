@@ -12,14 +12,14 @@ document.addEventListener("DOMContentLoaded", function (e) {
   var game = function (engine) {
 
       var playerOneKeys = {
-        WALK_RIGHT_KEY: 'RIGHT',
-        WALK_LEFT_KEY:  'LEFT',
+        RIGHT_KEY: 'RIGHT',
+        LEFT_KEY:  'LEFT',
         JUMP_KEY:       'UP'
       };
       
       var playerTwoKeys = {
-        WALK_RIGHT_KEY: 'L',
-        WALK_LEFT_KEY:  'J',
+        RIGHT_KEY: 'L',
+        LEFT_KEY:  'J',
         JUMP_KEY:       'I'
       };
 
@@ -711,6 +711,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
         // start in an idle state.
         state = idleState;
         
+        this.getState = function(){return state;}
+        
         this.moveForward = function(){
           state.moveForward && state.moveForward();
         };
@@ -904,6 +906,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
             //player.spin();
             };
             
+            // !!! fix me
+            this.getPlayer = function(){
+              return player;
+            }
+            
             this.onUpdate = function( event ) {
                 var delta = service.time.delta/1000;
                 var transform = this.owner.find( 'Transform' );
@@ -911,19 +918,22 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // Don't move the user if they're trying to move in both directions.
                 if(keyStates[options.RIGHT_KEY] && keyStates[options.LEFT_KEY]){
                    player.idle();
+                       player.update(delta, transform);
                 }
                 
                 // move them right if released the left key.
                 else if(keyStates[options.RIGHT_KEY]){
                    player.moveForward();
+                       player.update(delta, transform);
                 }
                 
                 // move them left if they released the right key.
                 else if(keyStates[options.LEFT_KEY]){
                    player.moveBackward();
+                       player.update(delta, transform);
                 }
 
-                player.update(delta, transform);
+            
             };// onUpdate
 
             // Boilerplate component registration; Lets our service know that we exist and want to do things
@@ -954,7 +964,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
       var run = function () {
 
           canvas = engine.graphics.target.element;
-                        
+
+            /////////////
+            // Fireball
+            /////////////
             new space.Entity({
               name: 'fireball',
               components: [
@@ -1073,7 +1086,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // Player 1
             ////////////
             new space.Entity({
-              name: 'player',
+              name: 'player1',
+                              //new Player(),
+                              playerState: new Player(),
               components: [
                 new engine.core.component.Transform({
                   position: math.Vector3( -50, 8, 35 ), // in front of red house.
@@ -1087,6 +1102,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                   material: resources.material
                 }),
                 
+
                 
                 new engine.input.component.Controller({
                   onKey: function(e) {
@@ -1192,11 +1208,24 @@ document.addEventListener("DOMContentLoaded", function (e) {
           });
           camera.find('Camera').target = math.Vector3(-60, 10, 30);
 
+          ////////////////
+          // Task
+          ////////////////
           var task = new engine.scheduler.Task({
             schedule: {
               phase: engine.scheduler.phases.UPDATE,
             },
-            callback: function () {}
+            callback: function () {
+              var player1 = space.find('player1').find('Player').getPlayer();
+              
+              
+              // If player1 is punching and player2 can get hit and player1's hitbox intersects player2's
+              // if (..)
+//              console.log(player1.toString());
+
+//              alert(player1.getState().toString());
+
+            }
           });
 
           // Start the engine!
