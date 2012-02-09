@@ -11,25 +11,32 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
   var game = function (engine) {
 
+      // Key mappings
       var playerOneKeys = {
-        RIGHT_KEY: 'RIGHT',
-        LEFT_KEY:  'LEFT',
-        JUMP_KEY:       'UP'
+          RIGHT_KEY:  'RIGHT',
+          LEFT_KEY:   'LEFT',
+          JUMP_KEY:   'UP',
+          CROUCH_KEY: 'DOWN',
+          name: 'player1'
       };
       
       var playerTwoKeys = {
-        RIGHT_KEY: 'L',
-        LEFT_KEY:  'J',
-        JUMP_KEY:       'I'
+          RIGHT_KEY:  'L',
+          LEFT_KEY:   'J',
+          JUMP_KEY:   'I',
+          CROUCH_KEY: 'K',
+          name: 'player2'
       };
-
 
   
       //////////////////////
       // Debugging
       //////////////////////
       var printd = function( div, str ) {
-          document.getElementById( div ).innerHTML = str + '<p>';
+          var el = document.getElementById( div );
+          if(el){
+            el.innerHTML = str + '<p>';
+          }
       };
       var cleard = function( div ) {
           document.getElementById( div ).innerHTML = '';
@@ -44,9 +51,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
       const MOVE_SPEED = 0.2;
       //const JUMP_HEIGHT
 
+      // Global state of the keyboard.
       var keyStates = [];
-
-
 
       //////////////////////
       // Character states
@@ -63,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
           this.moveForward = function(){pl.setState(pl.getMoveForwardState());};
           this.moveBackward = function(){pl.setState(pl.getMoveBackwardState());};
           this.jump = function(){pl.setState(pl.getJumpState());};
-          this.idle = function(){console.log('already idle');};
+          this.idle = function(){};//console.log('already idle');
           this.block = function(){pl.setState(pl.getBlockState());};
           this.punch = function(){pl.setState(pl.getPunchState());};
           this.kick = function(){pl.setState(pl.getKickState());};
@@ -369,8 +375,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
         function MoveForwardState(player){
           var pl = player;
 
-          this.moveForward = function(){console.log('already moving forward');};
-          this.moveBackward = function(){console.log('already moving backward');};
+          this.moveForward = function(){
+          //console.log('already moving forward');
+          };
+          this.moveBackward = function(){
+          //console.log('already moving backward');
+          };
 
   //???        this.forwardJump = function(){pl.setState(pl.getForwardJumpState());};
           this.jump = function(){pl.setState(pl.getForwardJumpState());};
@@ -416,7 +426,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
           };
 
           this.moveBackward = function(){
-            console.log('already moving backward');
+//            console.log('already moving backward');
           };
           
           this.jump = function(){pl.setState(pl.getBackwardJumpState());};
@@ -526,7 +536,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
            // !!! fix this
            pos[1] = 8;
            pc.position[1] = 8;
-           console.log(pc.position);
+           //console.log(pc.position);
 
            pl.setState(pl.getIdleState());
            jumpTimeElapsed = 0;
@@ -595,7 +605,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
            // !!! fix this
            pos[1] = 8;
            pc.position[1] = 8;
-           console.log(pc.position);
+           //console.log(pc.position);
 
            pl.setState(pl.getIdleState());
            jumpTimeElapsed = 0;
@@ -661,7 +671,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
            // !!! fix this
            pos[1] = 8;
            pc.position[1] = 8;
-           console.log(pc.position);
+           //console.log(pc.position);
 
            pl.setState(pl.getIdleState());
            jumpTimeElapsed = 0;
@@ -688,9 +698,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
     //
     var Player = (function(){
       
-      function Player(h){
-        var health = h || 100;
-
+      function Player(options){
+        options = options || {};
+        
+        var health = options.health || 100;
+        var playerName = options.name || "NoName";
+        
         var idleState    = new IdleState(this);
         var blockState   = new BlockState(this);
         var jumpState    = new JumpState(this);
@@ -707,9 +720,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
         var forwardJumpState = new ForwardJumpState(this);
         var backwardJumpState = new BackwardJumpState(this);
 
-        
         // start in an idle state.
-        state = idleState;
+        var state = idleState;
         
         this.getState = function(){return state;}
         
@@ -772,7 +784,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         
         this.update = function(t, pc){
           state.update(t, pc);
-          printd('debug', this.toString());
+          printd(playerName, this.toString());         
         }
         
         // smack the player with something
@@ -857,15 +869,15 @@ document.addEventListener("DOMContentLoaded", function (e) {
             type: 'Player',
             depends: ['Transform', 'Model']    // We're going to do some rotation, so we should have a transform
           },
-          function( options ) {
+          function( options, n ) {
             options = options || {};
             var that = this;
-            var player = new Player(options.health);
+            //alert(options.name);
+            var player = new Player({name:options.name, health: 100});
             
             var service = engine.logic; // This is a hack so that this component will have its message queue processed
 
             this.onStartMoveForward = function( event ) { 
-              console.log(player.toString());
               player.moveForward();
             };
             this.onStopMoveForward = function( event )  { 
@@ -879,31 +891,31 @@ document.addEventListener("DOMContentLoaded", function (e) {
             };
             
             this.onStartBlock = function( event ){
-            //  player.block();              
+              player.block();              
             };
             
             this.onStopBlock = function( event ){
-            //player.idle();
+              player.idle();
             };
 
             this.onPunch = function( event )   { 
-            //player.punch();
+              player.punch();
             };
             this.onKick = function( event )    {
-            //player.kick();
+              player.kick();
             };
             this.onJump = function( event )    {
-            //player.jump();
+              player.jump();
             };
             this.onThrowFireBall = function(event ){
-            //  player.throwFireBall();
+              player.throwFireBall();
             };
             
             this.onKill = function( event ){
-            //player.dead();
+              player.dead();
             };
             this.onSpin = function( event ){
-            //player.spin();
+              player.spin();
             };
             
             // !!! fix me
@@ -918,22 +930,19 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // Don't move the user if they're trying to move in both directions.
                 if(keyStates[options.RIGHT_KEY] && keyStates[options.LEFT_KEY]){
                    player.idle();
-                       player.update(delta, transform);
                 }
                 
-                // move them right if released the left key.
+                // Move them right if released the left key.
                 else if(keyStates[options.RIGHT_KEY]){
                    player.moveForward();
-                       player.update(delta, transform);
                 }
                 
-                // move them left if they released the right key.
+                // Move them left if they released the right key.
                 else if(keyStates[options.LEFT_KEY]){
                    player.moveBackward();
-                       player.update(delta, transform);
                 }
-
-            
+                
+                player.update(delta, transform);
             };// onUpdate
 
             // Boilerplate component registration; Lets our service know that we exist and want to do things
@@ -968,7 +977,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
             /////////////
             // Fireball
             /////////////
-            new space.Entity({
+            /*new space.Entity({
               name: 'fireball',
               components: [
                 new engine.core.component.Transform({
@@ -981,7 +990,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                   material: resources.material
                 })
               ]
-            });
+            });*/
             
             ////////////                      
             // Player 2
@@ -1078,9 +1087,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 new PlayerComponent(playerTwoKeys)
               ]
             });
-
-
-       
             
             ////////////                      
             // Player 1
@@ -1088,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
             new space.Entity({
               name: 'player1',
                               //new Player(),
-                              playerState: new Player(),
+                          //    playerState: new Player(),
               components: [
                 new engine.core.component.Transform({
                   position: math.Vector3( -50, 8, 35 ), // in front of red house.
@@ -1217,14 +1223,8 @@ document.addEventListener("DOMContentLoaded", function (e) {
             },
             callback: function () {
               var player1 = space.find('player1').find('Player').getPlayer();
-              
-              
               // If player1 is punching and player2 can get hit and player1's hitbox intersects player2's
               // if (..)
-//              console.log(player1.toString());
-
-//              alert(player1.getState().toString());
-
             }
           });
 
@@ -1274,9 +1274,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
          onfailure: function( error ) {
          }
         },
-
-        
-        
         
         
       ], {
