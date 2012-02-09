@@ -909,12 +909,10 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 var transform = this.owner.find( 'Transform' );
                 
                 // Don't move the user if they're trying to move in both directions.
-                // if(keyStates[options.RIGHT_KEY] && keyStates[options.LEFT_KEY]){
-                //   player.idle();
-                //   player.update(delta, transform);
-                // }
+                if(keyStates[options.RIGHT_KEY] && keyStates[options.LEFT_KEY]){
+                   player.idle();
+                }
                 
-                /*
                 // move them right if released the left key.
                 else if(keyStates[options.RIGHT_KEY]){
                    player.moveForward();
@@ -923,7 +921,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 // move them left if they released the right key.
                 else if(keyStates[options.LEFT_KEY]){
                    player.moveBackward();
-                }*/
+                }
 
                 player.update(delta, transform);
             };// onUpdate
