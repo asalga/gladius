@@ -21,6 +21,8 @@ define( function ( require ) {
                 
                 if( options.material ) {
                     var cvrMaterial = options.material._cvr.material;
+//alert(cvrMaterial);
+console.log(cvrMaterial);
                     _cvrMesh.setFaceMaterial( cvrMaterial );
                 } //if
                 _cvrMesh.prepare();

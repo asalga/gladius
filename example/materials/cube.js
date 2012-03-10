@@ -15,20 +15,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
 
             canvas = engine.graphics.target.element;
 
-            // create one cube
-            space.add( new engine.core.Entity({
-                name: 'cube0',
-                components: [
-                    new engine.core.component.Transform({
-                        position: math.Vector3( 0, 0, 0 ),
-                        rotation: math.Vector3( 0, 0, 0 )
-                    }),
-                    new engine.graphics.component.Model({
-                        mesh: resources.mesh,
-                        material: resources.materialRed
-                    })
-                ]
-            }) );
+
             
             // create a second cube parented to the first
             space.add( new engine.core.Entity({
@@ -46,6 +33,23 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                     })
                 ]
             }) );  
+            
+            console.log(resources.materialBlue);
+            
+            // create one cube
+            space.add( new engine.core.Entity({
+                name: 'cube0',
+                components: [
+                    new engine.core.component.Transform({
+                        position: math.Vector3( 0, 0, 0 ),
+                        rotation: math.Vector3( 0, 0, 0 )
+                    }),
+                    new engine.graphics.component.Model({
+                        mesh: resources.mesh,
+                        material: resources.materialRed
+                    })
+                ]
+            }) );
 
             // set up a camera in the space so we can see            
             space.add( new engine.core.Entity({
@@ -107,6 +111,16 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                     onfailure: function( error ) {
                     }
                 },
+/*                {
+                    type: engine.graphics.resource.Mesh,
+                    url: 'procedural-mesh1.js',                          
+                    load: engine.core.resource.proceduralLoad,
+                    onsuccess: function( mesh ) {
+                        resources.mesh1 = mesh;
+                    },
+                    onfailure: function( error ) {
+                    }
+                },*/
                 {
                     type: engine.graphics.resource.Material,
                     url: 'procedural-material-blue.js',

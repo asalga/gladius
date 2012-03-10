@@ -15,7 +15,7 @@ define( function ( require ) {
 
             var _cvrMaterial = new context.Material( data );
             this._cvr.material = _cvrMaterial;
-
+//console.log(this._cvr.material);
             // pass through the prepare function from CubicVR's object
             this.prepare = _cvrMaterial.prepare;
         });
