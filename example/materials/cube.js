@@ -45,7 +45,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                         rotation: math.Vector3( 0, 0, 0 )
                     }),
                     new engine.graphics.component.Model({
-                        mesh: resources.mesh,
+                        mesh: resources.mesh1,
                         material: resources.materialRed
                     })
                 ]
@@ -111,7 +111,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                     onfailure: function( error ) {
                     }
                 },
-/*                {
+                {
                     type: engine.graphics.resource.Mesh,
                     url: 'procedural-mesh1.js',                          
                     load: engine.core.resource.proceduralLoad,
@@ -120,7 +120,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
                     },
                     onfailure: function( error ) {
                     }
-                },*/
+                },
                 {
                     type: engine.graphics.resource.Material,
                     url: 'procedural-material-blue.js',
