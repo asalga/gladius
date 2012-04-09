@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
         PUNCH_KEY:  'A',
         name:       'player',
         dir:        FACING_RIGHT,
-        initialPos: [-20, FLOOR_POS, 0]
+        initialPos: [-1, FLOOR_POS+ 5, GAME_DEPTH]
       };
       
       //////////////////////
@@ -182,10 +182,9 @@ document.addEventListener("DOMContentLoaded", function (e) {
             if(health <= 0 && domId === 'player'){
               location.reload();
             }
-
-            // Refresh the page if the user dies.
-            // TODO: make this cooler
-            if(health <= 0 && domId === 'player'){
+            
+            // Refresh the page if the boss dies.
+            if(health <= 0 && domId === 'boss'){
               location.reload();
             }
 
@@ -396,12 +395,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
                 
                   // make crates when boss lands
                   var time = 10;
-                  for(var x = -38, y = 0; x < 30; x += 10, y += 15){
+                  for(var x = -50, y = 0; x < 38; x += 7, y += 15){
                     time += 0.5;
                     dropStoneCrate({position: [x, y + 100, GAME_DEPTH], time: time});
                   }
-                  
-                  // makeCrate({position:[-40, 20, GAME_DEPTH]});
+                  makeCrate({position: [30, 140, GAME_DEPTH]});
                   
                   pl.setState(pl.getWalkState());
                 }
@@ -741,6 +739,11 @@ document.addEventListener("DOMContentLoaded", function (e) {
       
         options = options || {};
         var that = this;
+
+        var vel = [0,0,0];
+        var acc = [0,0,0];
+        var angularVelocity = [0,0,0];
+
         
         // This is a hack so that this component will have its message queue processed
         var service = engine.logic; 
@@ -753,8 +756,16 @@ document.addEventListener("DOMContentLoaded", function (e) {
           // Only hurt the player if the crate landed on his head
           if(crateXpos[1] > userXpos[1]){
             if(e.data.entities[0].name === 'boss'){
-              space.remove(this.owner);
               e.data.entities[0].find('Health').onHurt(25);
+              
+              this.owner.remove("Body");
+              
+              var x = (Math.random() -0.5) * 20;
+                        
+              // Set the crate in motion.
+              vel = [x, 45, 25];
+              acc = [0, -100, 0];
+              angularVelocity = [(Math.random()-0.5) * 5, (Math.random()-0.5) * 5, (Math.random()-0.5) * 5];
             }
           }
 
@@ -763,12 +774,34 @@ document.addEventListener("DOMContentLoaded", function (e) {
           if(e.data.entities[0].name === 'player' || e.data.entities[1].name === 'player'){
             // place the crate on the last platform for now.
             this.owner.find('Body').onSetTransform({position: [30, 100]});
-          }
-          */
+          }*/
         };
         
         this.onUpdate = function (event) {
-          var delta = service.time.delta / 1000;          
+          var delta = service.time.delta / 1000;
+          
+          // Update the position
+          var pos = this.owner.find('Transform').position;
+          pos[0] += vel[0] * delta;
+          pos[1] += vel[1] * delta;
+          pos[2] += vel[2] * delta;
+          this.owner.find('Transform').position = pos;
+          
+          var rot = this.owner.find('Transform').rotation;
+          rot[0] += angularVelocity[0] * delta;
+          rot[1] += angularVelocity[1] * delta;
+          rot[2] += angularVelocity[2] * delta;
+          this.owner.find('Transform').rotation = rot;
+
+          vel[0] += acc[0] * delta;
+          vel[1] += acc[1] * delta;
+          vel[2] += acc[2] * delta;
+          
+          // If the crate goes past the floor, it won't be visible and
+          // therefore can be safely removed.
+          if(pos[1] < 0){
+            space.remove(this.owner);
+          }
         };
         
         // Boilerplate component registration; Lets our service know that we exist and want to do things
@@ -1112,7 +1145,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
           }
           
           // TODO: remove before release
-          document.getElementById('debug').innerHTML = this.owner.find('State').getCurrState();
+          //document.getElementById('debug').innerHTML = this.owner.find('State').getCurrState();
         }; // onUpdate
         
         // Boilerplate component registration; Lets our service know that we exist and want to do things
@@ -1229,7 +1262,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
             // Model
             new engine.core.component.Transform({
               /// XXX use initial pos
-              position: math.Vector3(30, FLOOR_POS + 105, GAME_DEPTH),
+              position: keyConfig.initialPos,
               scale: math.Vector3(7, 7, 7)
             }),
      
@@ -1242,15 +1275,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
               onKey: function (e) {
                 // keep state of the keys
                 var keyName = e.data.code;
-                keyStates[keyName] = (e.data.state === 'down') ? true : false;
-                
-                // TODO: remove before release
-                /*
-                switch(keyName){
-                  case '1':makeCrate({position: [-30, 40, GAME_DEPTH]});break;
-                }
-                */
-                
+                keyStates[keyName] = (e.data.state === 'down') ? true : false;                
               } // onKey
             }), //controller
             
@@ -1350,8 +1375,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
             }
           });
           
-          makeCrate({position: [-30, 40, GAME_DEPTH]});
-
           // Start the engine!
           engine.run();
         };
